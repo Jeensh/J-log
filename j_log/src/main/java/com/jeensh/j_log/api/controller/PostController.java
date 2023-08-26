@@ -2,8 +2,13 @@ package com.jeensh.j_log.api.controller;
 
 import com.jeensh.j_log.api.request.PostCreate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,8 +38,7 @@ public class PostController {
 //    }
 
     @PostMapping("/posts")
-    public String post_v4(@RequestBody PostCreate params) {
-        log.info("params={}", params);
+    public String post_v4(@RequestBody @Validated PostCreate params) {
         return params.toString();
     }
 }
