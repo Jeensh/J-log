@@ -25,30 +25,6 @@ public class PostController {
         return "Hello World";
     }
 
-//    @PostMapping("/posts")
-//    public String post_v1(@RequestParam String title, @RequestParam String content) {
-//        log.info("title={}, content={}", title, content);
-//        return "title=" + title + ", content=" + content;
-//    }
-
-//    @PostMapping("/posts")
-//    public String post_v2(@RequestParam Map<String, String> params) {
-//        log.info("params={}", params);
-//        return "title=" + params.get("title") + ", content=" + params.get("content");
-//    }
-
-//    @PostMapping("/posts")
-//    public String post_v3(@ModelAttribute PostCreate params) {
-//        log.info("params={}", params);
-//        return params.toString();
-//    }
-
-//    @PostMapping("/posts")
-//    public String post_v4(@RequestBody @Validated PostCreate params) {
-//        log.info("params={}", params);
-//        return params.toString();
-//    }
-
     @PostMapping("/posts")
     public Map<String, String> post(@RequestBody @Validated PostCreate request) {
         postService.write(request);
