@@ -3,14 +3,18 @@ package com.jeensh.j_log.api.service;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
+@Transactional
 class PostServiceTest {
 
     @Autowired
@@ -20,7 +24,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 작성")
-    void writePostTest() {
+    void savePostTest() {
         //given
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다.")
@@ -33,6 +37,24 @@ class PostServiceTest {
         //then
         assertThat(postRepository.count()).isEqualTo(1L);
         Post post = postRepository.findAll().get(0);
+        assertThat(post.getTitle()).isEqualTo(postCreate.getTitle());
+        assertThat(post.getContent()).isEqualTo(postCreate.getContent());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회")
+    void findPostByIdTest() {
+        //given
+        PostCreate postCreate = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        //when
+        Long postId = postService.write(postCreate);
+        Post post = postService.get(postId);
+
+        //then
         assertThat(post.getTitle()).isEqualTo(postCreate.getTitle());
         assertThat(post.getContent()).isEqualTo(postCreate.getContent());
     }
