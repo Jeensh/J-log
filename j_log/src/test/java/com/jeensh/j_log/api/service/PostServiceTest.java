@@ -3,6 +3,7 @@ package com.jeensh.j_log.api.service;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,10 +53,11 @@ class PostServiceTest {
 
         //when
         Long postId = postService.write(postCreate);
-        Post post = postService.get(postId);
+        PostResponse postResponse = postService.get(postId);
 
         //then
-        assertThat(post.getTitle()).isEqualTo(postCreate.getTitle());
-        assertThat(post.getContent()).isEqualTo(postCreate.getContent());
+        assertThat(postResponse.getId()).isEqualTo(postId);
+        assertThat(postResponse.getTitle()).isEqualTo(postCreate.getTitle());
+        assertThat(postResponse.getContent()).isEqualTo(postCreate.getContent());
     }
 }
