@@ -6,6 +6,7 @@ import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,9 @@ public class PostService {
 
     private final PostRepository postRepository;
 
+    /**
+     * 게시글 저장
+     */
     public Long write(PostCreate postCreate) {
         Post post = postRepository.save(Post.builder()
                 .title(postCreate.getTitle())
@@ -29,6 +33,9 @@ public class PostService {
         return post.getId();
     }
 
+    /**
+     * 단건조회
+     */
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
@@ -36,8 +43,11 @@ public class PostService {
         return new PostResponse(post);
     }
 
-    public List<PostResponse> getList() {
-        return postRepository.findAll().stream()
+    /**
+     * 페이지 조회
+     */
+    public List<PostResponse> getList(Pageable pageable) {
+        return postRepository.findAll(pageable).stream()
                 .map(o -> new PostResponse(o))
                 .collect(Collectors.toList());
     }

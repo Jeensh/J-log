@@ -5,6 +5,7 @@ import com.jeensh.j_log.api.response.PostResponse;
 import com.jeensh.j_log.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +31,10 @@ public class PostController {
      * 게시글 목록 조회
      */
     @GetMapping("/posts")
-    public List<PostResponse> getList() {
-        return postService.getList();
+    public List<PostResponse> getList(Pageable pageable) {
+        return postService.getList(pageable);
     }
+
 
     /**
      *  게시글 저장

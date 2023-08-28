@@ -9,11 +9,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.domain.Sort.Direction.*;
 
 @Slf4j
 @SpringBootTest
@@ -64,24 +69,28 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 목록 조회")
-    void findAllPostTest() {
+    @DisplayName("글 1페이지 조회")
+    void findPostsForPageTest() {
         //given
-        int count = 5;
-        for(int i = 0; i < count; i++){
-            String title = "제목입니다" + i;
-            String content = "내용입니다" + i;
-            PostCreate postCreate = PostCreate.builder()
-                    .title(title)
-                    .content(content)
+        int count = 30;
+        int maxSizePerPage = 5;
+        List<Post> requestPosts = new ArrayList<>();
+        for(int i = 1; i <= count; i++){
+            Post post = Post.builder()
+                    .title("제목입니다" + i)
+                    .content("내용입니다" + i)
                     .build();
-            postService.write(postCreate);
+            requestPosts.add(post);
         }
+        postRepository.saveAll(requestPosts);
 
         //when
-        List<PostResponse> posts = postService.getList();
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(DESC, "id"));
+        List<PostResponse> posts = postService.getList(pageable);
 
         //then
-        assertThat(posts.size()).isEqualTo(count);
+        assertThat(posts.size()).isEqualTo(maxSizePerPage);
+        assertThat(posts.get(0).getTitle()).isEqualTo("제목입니다30");
+        assertThat(posts.get(4).getTitle()).isEqualTo("제목입니다26");
     }
 }

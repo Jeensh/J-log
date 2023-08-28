@@ -87,28 +87,29 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 게시글 목록 조회")
-    void findAllPostRequestTest() throws Exception {
+    @DisplayName("/posts?page=1 요청시 게시글 목록 1페이지 조회")
+    void findPostsForPageTest() throws Exception {
         //given
-        int count = 5;
-        List<PostCreate> postCreates = new ArrayList<>();
-        for(int i = 0; i < count; i++){
-            String title = "제목입니다" + i;
-            String content = "내용입니다" + i;
-            PostCreate postCreate = PostCreate.builder()
-                    .title(title)
-                    .content(content)
+        int count = 30;
+        int maxSizePerPage = 5;
+        List<Post> requestPosts = new ArrayList<>();
+        for(int i = 1; i <= count; i++){
+            Post post = Post.builder()
+                    .title("제목입니다" + i)
+                    .content("내용입니다" + i)
                     .build();
-            postService.write(postCreate);
-            postCreates.add(postCreate);
+            requestPosts.add(post);
         }
+        postRepository.saveAll(requestPosts);
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5))
-                .andExpect(jsonPath("$[0].title").value(postCreates.get(0).getTitle()))
-                .andExpect(jsonPath("$[0].content").value(postCreates.get(0).getContent()))
+                .andExpect(jsonPath("$.length()").value(maxSizePerPage))
+                .andExpect(jsonPath("$[0].title").value(requestPosts.get(29).getTitle()))
+                .andExpect(jsonPath("$[0].content").value(requestPosts.get(29).getContent()))
+                .andExpect(jsonPath("$[1].title").value(requestPosts.get(28).getTitle()))
+                .andExpect(jsonPath("$[1].content").value(requestPosts.get(28).getContent()))
                 .andDo(print());
     }
 }
