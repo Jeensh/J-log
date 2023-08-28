@@ -14,6 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -80,6 +83,32 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(postCreate.getTitle()))
                 .andExpect(jsonPath("$.content").value(postCreate.getContent()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts 요청시 게시글 목록 조회")
+    void findAllPostRequestTest() throws Exception {
+        //given
+        int count = 5;
+        List<PostCreate> postCreates = new ArrayList<>();
+        for(int i = 0; i < count; i++){
+            String title = "제목입니다" + i;
+            String content = "내용입니다" + i;
+            PostCreate postCreate = PostCreate.builder()
+                    .title(title)
+                    .content(content)
+                    .build();
+            postService.write(postCreate);
+            postCreates.add(postCreate);
+        }
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[0].title").value(postCreates.get(0).getTitle()))
+                .andExpect(jsonPath("$[0].content").value(postCreates.get(0).getContent()))
                 .andDo(print());
     }
 }
