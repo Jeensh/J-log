@@ -3,10 +3,10 @@ package com.jeensh.j_log.api.service;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,9 +46,9 @@ public class PostService {
     /**
      * 페이지 조회
      */
-    public List<PostResponse> getList(Pageable pageable) {
-        return postRepository.findAll(pageable).stream()
-                .map(o -> new PostResponse(o))
+    public List<PostResponse> getList(PostSearch postSearch) {
+        return postRepository.getList(postSearch).stream()
+                .map(PostResponse::new)
                 .collect(Collectors.toList());
     }
 }

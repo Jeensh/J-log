@@ -3,22 +3,19 @@ package com.jeensh.j_log.api.service;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.data.domain.Sort.Direction.*;
 
 @Slf4j
 @SpringBootTest
@@ -73,7 +70,7 @@ class PostServiceTest {
     void findPostsForPageTest() {
         //given
         int count = 30;
-        int maxSizePerPage = 5;
+        int maxSizePerPage = 10;
         List<Post> requestPosts = new ArrayList<>();
         for(int i = 1; i <= count; i++){
             Post post = Post.builder()
@@ -85,8 +82,9 @@ class PostServiceTest {
         postRepository.saveAll(requestPosts);
 
         //when
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(DESC, "id"));
-        List<PostResponse> posts = postService.getList(pageable);
+        PostSearch postSearch = PostSearch.builder()
+                .build();
+        List<PostResponse> posts = postService.getList(postSearch);
 
         //then
         assertThat(posts.size()).isEqualTo(maxSizePerPage);
