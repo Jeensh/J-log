@@ -3,6 +3,7 @@ package com.jeensh.j_log.api.service;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -90,5 +91,55 @@ class PostServiceTest {
         assertThat(posts.size()).isEqualTo(maxSizePerPage);
         assertThat(posts.get(0).getTitle()).isEqualTo("제목입니다30");
         assertThat(posts.get(4).getTitle()).isEqualTo("제목입니다26");
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void editPostTitleTest() {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        String titleToChange = "수정 후 제목";
+        PostEdit postEdit = PostEdit.builder()
+                .title(titleToChange)
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertThat(changedPost.getTitle()).isEqualTo(titleToChange);
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void editPostContentTest() {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        String contentToChange = "수정 후 내용";
+        PostEdit postEdit = PostEdit.builder()
+                .content(contentToChange)
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertThat(changedPost.getContent()).isEqualTo(contentToChange);
     }
 }

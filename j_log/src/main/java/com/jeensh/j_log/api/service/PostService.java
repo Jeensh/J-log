@@ -1,8 +1,10 @@
 package com.jeensh.j_log.api.service;
 
 import com.jeensh.j_log.api.domain.Post;
+import com.jeensh.j_log.api.domain.PostEditor;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class PostService {
     /**
      * 단건조회
      */
+    @Transactional(readOnly = true)
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
@@ -46,9 +49,33 @@ public class PostService {
     /**
      * 페이지 조회
      */
+    @Transactional(readOnly = true)
     public List<PostResponse> getList(PostSearch postSearch) {
         return postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Post 수정
+     */
+    public PostResponse edit(Long id, PostEdit postEdit) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        if(postEdit.getTitle() != null){
+            editorBuilder.title(postEdit.getTitle());
+        }
+
+        if(postEdit.getContent() != null){
+            editorBuilder.content(postEdit.getContent());
+        }
+        PostEditor postEditor = editorBuilder.build();
+
+        post.edit(postEditor);
+
+        return new PostResponse(post);
     }
 }

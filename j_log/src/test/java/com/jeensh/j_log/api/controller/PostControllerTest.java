@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class PostControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("/post 요청시 DB에 값 저장")
+    @DisplayName("/post POST 요청시 DB에 값 저장")
     void savePostRequestTest() throws Exception {
         //given
         PostCreate request = PostCreate.builder()
@@ -68,7 +69,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts/{postId} 요청시 postId에 해당하는 게시글 조회")
+    @DisplayName("/posts/{postId} GET 요청시 postId에 해당하는 게시글 조회")
     void findPostRequestTest() throws Exception {
         //given
         PostCreate postCreate = PostCreate.builder()
@@ -87,7 +88,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts?page=1 요청시 게시글 목록 1페이지 조회")
+    @DisplayName("/posts?page=1 GET 요청시 게시글 목록 1페이지 조회")
     void findPostsForPageTest() throws Exception {
         //given
         int count = 30;
@@ -114,8 +115,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts?page=0 요청시 첫 페이지 조회")
-    void RequestPageZeroTest() throws Exception {
+    @DisplayName("/posts?page=0 GET 요청시 첫 페이지 조회")
+    void requestPageZeroTest() throws Exception {
         //given
         int count = 30;
         int maxSizePerPage = 5;
@@ -137,6 +138,35 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[0].content").value(requestPosts.get(29).getContent()))
                 .andExpect(jsonPath("$[1].title").value(requestPosts.get(28).getTitle()))
                 .andExpect(jsonPath("$[1].content").value(requestPosts.get(28).getContent()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts/1 PATCH 요청시 post 수정")
+    void editPostTest() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        String contentToChange = "수정 후 내용";
+        String titleToChange = "수정 후 제목";
+        PostEdit postEdit = PostEdit.builder()
+                .content(contentToChange)
+                .title(titleToChange)
+                .build();
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(titleToChange))
+                .andExpect(jsonPath("$.content").value(contentToChange))
                 .andDo(print());
     }
 }

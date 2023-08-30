@@ -1,6 +1,7 @@
 package com.jeensh.j_log.api.controller;
 
 import com.jeensh.j_log.api.request.PostCreate;
+import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
 import com.jeensh.j_log.api.service.PostService;
@@ -20,6 +21,15 @@ public class PostController {
     private final PostService postService;
 
     /**
+     * 게시글 저장
+     */
+    @PostMapping("/posts")
+    public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
+        Long postId = postService.write(request);
+        return Map.of("postId", postId);
+    }
+
+    /**
      *  게시글 단건 조회
      */
     @GetMapping("/posts/{postId}")
@@ -35,14 +45,12 @@ public class PostController {
         return postService.getList(postSearch);
     }
 
-
     /**
-     *  게시글 저장
+     * 게시글 수정
      */
-    @PostMapping("/posts")
-    public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
-        Long postId = postService.write(request);
-        return Map.of("postId", postId);
+    @PatchMapping("/posts/{postId}")
+    public PostResponse edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit){
+        return postService.edit(postId, postEdit);
     }
 
 }
