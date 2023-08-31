@@ -2,6 +2,7 @@ package com.jeensh.j_log.api.service;
 
 import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.domain.PostEditor;
+import com.jeensh.j_log.api.exception.PostNotFound;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
@@ -41,7 +42,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         return new PostResponse(post);
     }
@@ -61,7 +62,7 @@ public class PostService {
      */
     public PostResponse edit(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
@@ -84,7 +85,7 @@ public class PostService {
      */
     public void delete(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         postRepository.delete(post);
     }

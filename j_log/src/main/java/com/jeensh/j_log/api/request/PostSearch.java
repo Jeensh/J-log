@@ -8,10 +8,8 @@ public class PostSearch {
 
     private static final int MAX_SIZE = 2000;
 
-    @Builder.Default
-    private Integer page = 1;
-    @Builder.Default
-    private Integer size = 10;
+    private Integer page;
+    private Integer size;
 
     @Builder
     public PostSearch(Integer page, Integer size) {

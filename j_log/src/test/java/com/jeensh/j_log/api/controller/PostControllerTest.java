@@ -69,7 +69,26 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts/{postId} GET 요청시 postId에 해당하는 게시글 조회")
+    @DisplayName("post 작성시 title에 '바보'는 포함될 수 없다.")
+    void savePostRequestTest_InvalidRequest() throws Exception {
+        //given
+        PostCreate request = PostCreate.builder()
+                .title("이 바보야")
+                .content("내용 입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts/{postId} GET 요청시 postId에 해당하는 post 조회")
     void findPostRequestTest() throws Exception {
         //given
         PostCreate postCreate = PostCreate.builder()
@@ -88,7 +107,16 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts?page=1 GET 요청시 게시글 목록 1페이지 조회")
+    @DisplayName("/posts/{postId} GET 요청으로 존재하지 않은 post 조회 ")
+    void findPostRequestTest_PostNotFound() throws Exception {
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", 1L))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts?page=1 GET 요청시 post 목록 1페이지 조회")
     void findPostsForPageTest() throws Exception {
         //given
         int count = 30;
@@ -171,6 +199,26 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("/posts/{postId} PATCH 요청으로 존재하지 않은 post 수정 ")
+    void editPostTest_PostNotFound() throws Exception {
+        //given
+        String contentToChange = "수정 후 내용";
+        String titleToChange = "수정 후 제목";
+        PostEdit postEdit = PostEdit.builder()
+                .content(contentToChange)
+                .title(titleToChange)
+                .build();
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("/posts/{postId} DELETE 요청시 post 삭제")
     void deletePostTest() throws Exception {
         //given
@@ -186,6 +234,17 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts/{postId} DELETE 요청으로 존재하지 않은 post 삭제")
+    void deletePostTest_PostNotFound() throws Exception {
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 }

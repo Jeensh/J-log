@@ -1,6 +1,7 @@
 package com.jeensh.j_log.api.service;
 
 import com.jeensh.j_log.api.domain.Post;
+import com.jeensh.j_log.api.exception.PostNotFound;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 @SpringBootTest
@@ -64,6 +66,21 @@ class PostServiceTest {
         assertThat(postResponse.getId()).isEqualTo(postId);
         assertThat(postResponse.getTitle()).isEqualTo(postCreate.getTitle());
         assertThat(postResponse.getContent()).isEqualTo(postCreate.getContent());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    void findPostByIdTest_PostNotFound() {
+        //given
+        PostCreate postCreate = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        Long postId = postService.write(postCreate);
+
+        //expected
+        assertThatThrownBy(() -> postService.get(postId + 1L)).isInstanceOf(PostNotFound.class);
     }
 
     @Test
@@ -119,6 +136,27 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("글 제목 수정 - 존재하지 않는 글")
+    void editPostTitleTest_PostNotFound() {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        String titleToChange = "수정 후 제목";
+        PostEdit postEdit = PostEdit.builder()
+                .title(titleToChange)
+                .build();
+
+        //expected
+        assertThatThrownBy(() ->  postService.edit(post.getId() + 1L, postEdit)).isInstanceOf(PostNotFound.class);
+
+    }
+
+    @Test
     @DisplayName("글 내용 수정")
     void editPostContentTest() {
         //given
@@ -159,5 +197,20 @@ class PostServiceTest {
 
         //then
         assertThat(postRepository.count()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("글 삭제 - 존재하지 않는 글")
+    void deletePostTest_PostNotFound() {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        //then
+        assertThatThrownBy(() ->  postService.delete(post.getId() + 1L)).isInstanceOf(PostNotFound.class);
     }
 }
