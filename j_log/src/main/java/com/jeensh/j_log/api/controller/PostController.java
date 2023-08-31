@@ -21,7 +21,7 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 저장
+     * post 저장
      */
     @PostMapping("/posts")
     public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
@@ -30,7 +30,7 @@ public class PostController {
     }
 
     /**
-     *  게시글 단건 조회
+     *  post 단건 조회
      */
     @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable Long postId) {
@@ -38,7 +38,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 목록 조회
+     * post 목록 조회
      */
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
@@ -46,7 +46,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 수정
+     * post 수정
      */
     @PatchMapping("/posts/{postId}")
     public PostResponse edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit){
@@ -54,7 +54,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 삭제
+     * post 삭제
      */
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable Long postId){

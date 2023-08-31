@@ -24,7 +24,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     /**
-     * 게시글 저장
+     * post 저장
      */
     public Long write(PostCreate postCreate) {
         Post post = postRepository.save(Post.builder()
@@ -79,6 +79,9 @@ public class PostService {
         return new PostResponse(post);
     }
 
+    /**
+     * post 삭제
+     */
     public void delete(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
