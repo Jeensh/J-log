@@ -142,4 +142,22 @@ class PostServiceTest {
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
         assertThat(changedPost.getContent()).isEqualTo(contentToChange);
     }
+
+    @Test
+    @DisplayName("글 삭제")
+    void deletePostTest() {
+        //given
+        Post post = Post.builder()
+                .title("수정 전 제목")
+                .content("수정 전 내용")
+                .build();
+
+        postRepository.save(post);
+
+        //when
+        postService.delete(post.getId());
+
+        //then
+        assertThat(postRepository.count()).isEqualTo(0);
+    }
 }
