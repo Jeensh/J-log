@@ -27,7 +27,7 @@ public class PostController {
     public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
         request.validate();
         Long postId = postService.write(request);
-        return Map.of("postId", postId);
+        return Map.of("id", postId);
     }
 
     /**
