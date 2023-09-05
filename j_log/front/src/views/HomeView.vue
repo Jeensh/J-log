@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const posts : any = ref([]);
+const posts: any = ref([]);
 
 axios.get(constant.J_LOG_POST_API + "?page=1&size=10").then(response => {
   response.data.forEach((post: any) => {
@@ -14,7 +14,7 @@ axios.get(constant.J_LOG_POST_API + "?page=1&size=10").then(response => {
   });
 })
 
-const moveToRead = function() {
+const moveToRead = function () {
   router.push({ name: "read" });
 };
 
@@ -24,7 +24,7 @@ const moveToRead = function() {
   <ul>
     <li v-for="post in posts" :key="post.id">
       <div>
-        <router-link :to="{name: 'read', params: {postId: post.id} }">{{ post.title }}</router-link>
+        <router-link :to="{ name: 'read', params: { postId: post.id } }">{{ post.title }}</router-link>
       </div>
     </li>
   </ul>

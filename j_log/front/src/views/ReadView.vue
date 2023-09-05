@@ -2,9 +2,10 @@
 import { onMounted, ref } from 'vue';
 import constant from '@/stores/constant';
 import axios from "axios"
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
-    postId : {
+    postId: {
         type: [Number, String],
         require: true,
     }
@@ -16,8 +17,14 @@ const post = ref({
     content: "",
 });
 
-onMounted(() =>{
-    axios.get(constant.J_LOG_POST_API + `/${props.postId}`).then((response) =>{
+const router = useRouter();
+
+const moveToEdit = function () {
+    router.push({ name: "edit", params: { postId: props.postId } })
+};
+
+onMounted(() => {
+    axios.get(constant.J_LOG_POST_API + `/${props.postId}`).then((response) => {
         post.value = response.data;
     });
 });
@@ -27,7 +34,8 @@ onMounted(() =>{
 <template>
     <h2>{{ post.title }}</h2>
     <div>{{ post.content }}</div>
+
+    <el-button type="warning" @click="moveToEdit()">수정</el-button>
 </template>
 
-<style>
-</style>
+<style></style>
