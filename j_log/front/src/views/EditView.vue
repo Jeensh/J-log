@@ -35,18 +35,26 @@ axios.get(constant.J_LOG_POST_API + `/${props.postId}`).then((response) => {
 </script>
 
 <template>
-    <div>
-        <el-input v-model="post.title" placeholder="제목을 입력해주세요" />
+    <div class="title">
+        <el-input v-model="post.title" />
     </div>
-    <div>
-        <div>
+
+    <div class="mt-2">
+        <div class="content">
             <el-input v-model="post.content" type="textarea" rows="15"></el-input>
         </div>
+    </div>
 
-        <div>
-            <el-button tpye="warning" @click="edit()">글 수정완료</el-button>
-        </div>
+    <div class="mt-2">
+        <el-rowl>
+            <el-col>
+                <div class="d-flex justify-content-end">
+                    <el-button tpye="warning" @click="edit()">수정완료</el-button>
+                </div>
+            </el-col>
+        </el-rowl>
     </div>
 </template>
 
-<style></style>
+<style scoped lang="scss">
+</style>

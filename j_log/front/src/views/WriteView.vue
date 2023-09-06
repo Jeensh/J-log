@@ -9,14 +9,14 @@ const content = ref("");
 
 const router = useRouter();
 
-const write = function() {
+const write = function () {
     axios.post(constant.J_LOG_POST_API, {
         title: title.value,
         content: content.value
     })
-    .then(() => {
-        router.replace({name: "home"})
-    })
+        .then(() => {
+            router.replace({ name: "home" })
+        })
 }
 </script>
 
@@ -25,12 +25,14 @@ const write = function() {
         <el-input v-model="title" placeholder="제목을 입력해주세요" />
     </div>
     <div>
-        <div>
-            <el-input v-model="content" type="textarea" rows ="15"></el-input>
+        <div class="mt-2">
+            <el-input v-model="content" type="textarea" rows="15"></el-input>
         </div>
 
-        <div>
-            <el-button tpye="primary" @click="write()">글 작성완료</el-button>
+        <div class="mt-2">
+            <div class="d-flex justify-content-end">
+                <el-button type="primary" @click="write()">작성완료</el-button>
+            </div>
         </div>
     </div>
 </template>
