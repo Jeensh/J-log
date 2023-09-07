@@ -23,6 +23,13 @@ const moveToEdit = function () {
     router.push({ name: "edit", params: { postId: props.postId } })
 };
 
+const deletePost = function () {
+    axios.delete(constant.J_LOG_POST_API + `/${props.postId}`).then(() => {
+        alert("게시글이 삭제되었습니다.");
+        router.replace({ name: "home" });
+    });
+};
+
 onMounted(() => {
     axios.get(constant.J_LOG_POST_API + `/${props.postId}`).then((response) => {
         post.value = response.data;
@@ -51,13 +58,12 @@ onMounted(() => {
         </el-col>
     </el-row>
 
-    <el-rowl>
-        <el-col>
-            <div class="d-flex justify-content-end">
-                <el-button type="warning" @click="moveToEdit()">수정</el-button>
-            </div>
+    <el-row>
+        <el-col class="d-flex justify-content-end mt-3">
+            <el-button type="warning" @click="moveToEdit()">수정</el-button>
+            <el-button type="danger" @click="deletePost()">삭제</el-button>
         </el-col>
-    </el-rowl>
+    </el-row>
 </template>
 
 <style scoped lang="scss">
