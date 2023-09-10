@@ -24,10 +24,13 @@ public class PostController {
      * post 저장
      */
     @PostMapping("/posts")
-    public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
-        request.validate();
-        Long postId = postService.write(request);
-        return Map.of("id", postId);
+    public Map<String, Long> post(@RequestBody @Validated PostCreate request, @RequestHeader String authorization) {
+        if (authorization.equals("jeensh")) {
+            request.validate();
+            Long postId = postService.write(request);
+            return Map.of("id", postId);
+        }
+        else return Map.of("id", -1L);
     }
 
     /**
@@ -50,8 +53,10 @@ public class PostController {
      * post 수정
      */
     @PatchMapping("/posts/{postId}")
-    public PostResponse edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit){
-        return postService.edit(postId, postEdit);
+    public void edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit, @RequestHeader String authorization){
+        if (authorization.equals("jeensh")) {
+            postService.edit(postId, postEdit);
+        }
     }
 
     /**

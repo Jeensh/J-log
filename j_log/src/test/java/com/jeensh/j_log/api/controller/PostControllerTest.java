@@ -56,6 +56,7 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(APPLICATION_JSON)
                         .content(json)
+                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -187,15 +188,18 @@ class PostControllerTest {
                 .title(titleToChange)
                 .build();
 
-        //expected
+        //when
         mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit))
+                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(titleToChange))
-                .andExpect(jsonPath("$.content").value(contentToChange))
                 .andDo(print());
+
+        //then
+        assertThat(postRepository.findById(post.getId()).orElseThrow().getTitle()).isEqualTo(titleToChange);
+        assertThat(postRepository.findById(post.getId()).orElseThrow().getContent()).isEqualTo(contentToChange);
     }
 
     @Test
@@ -213,6 +217,7 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit))
+                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isNotFound())
                 .andDo(print());
