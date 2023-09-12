@@ -1,5 +1,6 @@
 package com.jeensh.j_log.api.controller;
 
+import com.jeensh.j_log.api.config.data.UserSession;
 import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
@@ -16,27 +17,33 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/posts")
 public class PostController {
 
     private final PostService postService;
 
     /**
-     * post 저장
+     * test
      */
-    @PostMapping("/posts")
-    public Map<String, Long> post(@RequestBody @Validated PostCreate request, @RequestHeader String authorization) {
-        if (authorization.equals("jeensh")) {
-            request.validate();
-            Long postId = postService.write(request);
-            return Map.of("id", postId);
-        }
-        else return Map.of("id", -1L);
+    @GetMapping("/test")
+    public String test(UserSession userSession){
+        return userSession.getId().toString();
     }
 
     /**
-     *  post 단건 조회
+     * post 저장
      */
-    @GetMapping("/posts/{postId}")
+    @PostMapping()
+    public Map<String, Long> post(@RequestBody @Validated PostCreate request) {
+        request.validate();
+        Long postId = postService.write(request);
+        return Map.of("id", postId);
+    }
+
+    /**
+     * post 단건 조회
+     */
+    @GetMapping("/{postId}")
     public PostResponse get(@PathVariable Long postId) {
         return postService.get(postId);
     }
@@ -44,7 +51,7 @@ public class PostController {
     /**
      * post 목록 조회
      */
-    @GetMapping("/posts")
+    @GetMapping()
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
     }
@@ -52,18 +59,16 @@ public class PostController {
     /**
      * post 수정
      */
-    @PatchMapping("/posts/{postId}")
-    public void edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit, @RequestHeader String authorization){
-        if (authorization.equals("jeensh")) {
-            postService.edit(postId, postEdit);
-        }
+    @PatchMapping("/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Validated PostEdit postEdit) {
+        postService.edit(postId, postEdit);
     }
 
     /**
      * post 삭제
      */
-    @DeleteMapping("/posts/{postId}")
-    public void delete(@PathVariable Long postId){
+    @DeleteMapping("/{postId}")
+    public void delete(@PathVariable Long postId) {
         postService.delete(postId);
     }
 }

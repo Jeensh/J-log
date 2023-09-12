@@ -56,7 +56,6 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(APPLICATION_JSON)
                         .content(json)
-                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -123,7 +122,7 @@ class PostControllerTest {
         int count = 30;
         int maxSizePerPage = 5;
         List<Post> requestPosts = new ArrayList<>();
-        for(int i = 1; i <= count; i++){
+        for (int i = 1; i <= count; i++) {
             Post post = Post.builder()
                     .title("제목입니다" + i)
                     .content("내용입니다" + i)
@@ -150,7 +149,7 @@ class PostControllerTest {
         int count = 30;
         int maxSizePerPage = 5;
         List<Post> requestPosts = new ArrayList<>();
-        for(int i = 1; i <= count; i++){
+        for (int i = 1; i <= count; i++) {
             Post post = Post.builder()
                     .title("제목입니다" + i)
                     .content("내용입니다" + i)
@@ -192,7 +191,6 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit))
-                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -217,7 +215,6 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit))
-                        .header("authorization", "jeensh")
                 )
                 .andExpect(status().isNotFound())
                 .andDo(print());
