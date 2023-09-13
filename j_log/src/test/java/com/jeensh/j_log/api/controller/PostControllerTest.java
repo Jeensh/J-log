@@ -5,7 +5,6 @@ import com.jeensh.j_log.api.domain.Post;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
-import com.jeensh.j_log.api.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,6 @@ class PostControllerTest {
 
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private PostService postService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -91,18 +87,18 @@ class PostControllerTest {
     @DisplayName("/posts/{postId} GET 요청시 postId에 해당하는 post 조회")
     void findPostRequestTest() throws Exception {
         //given
-        PostCreate postCreate = PostCreate.builder()
+        Post post = Post.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .build();
 
-        Long postId = postService.write(postCreate);
+        Long postId = postRepository.save(post).getId();
 
         //expected
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", postId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(postCreate.getTitle()))
-                .andExpect(jsonPath("$.content").value(postCreate.getContent()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.content").value(post.getContent()))
                 .andDo(print());
     }
 

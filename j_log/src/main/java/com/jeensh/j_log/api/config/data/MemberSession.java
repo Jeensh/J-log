@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UserSession {
+public class MemberSession {
     private final Long id;
 }

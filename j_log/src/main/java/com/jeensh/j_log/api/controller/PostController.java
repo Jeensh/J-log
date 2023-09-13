@@ -1,6 +1,6 @@
 package com.jeensh.j_log.api.controller;
 
-import com.jeensh.j_log.api.config.data.UserSession;
+import com.jeensh.j_log.api.config.data.MemberSession;
 import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
@@ -26,8 +26,8 @@ public class PostController {
      * test
      */
     @GetMapping("/test")
-    public String test(UserSession userSession){
-        return userSession.getId().toString();
+    public String test(MemberSession memberSession){
+        return memberSession.getId().toString();
     }
 
     /**

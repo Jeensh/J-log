@@ -1,5 +1,7 @@
 package com.jeensh.j_log.api.config;
 
+import com.jeensh.j_log.api.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,7 +13,11 @@ import java.util.List;
 import static com.jeensh.j_log.api.config.CorsAllowOrigin.*;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final SessionRepository sessionRepository;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -27,6 +33,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthResolver());
+        resolvers.add(new AuthResolver(sessionRepository));
     }
 }
