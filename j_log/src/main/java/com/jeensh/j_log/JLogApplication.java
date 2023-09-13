@@ -15,7 +15,7 @@ public class JLogApplication {
     }
 
     @Bean
-    @Profile("development")
+    @Profile("dev")
     public TestDataInit testDataInit(MemberRepository memberRepository, PostRepository postRepository){
         return new TestDataInit(postRepository, memberRepository);
     }

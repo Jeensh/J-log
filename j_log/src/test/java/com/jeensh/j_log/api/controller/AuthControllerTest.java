@@ -6,6 +6,7 @@ import com.jeensh.j_log.api.domain.Session;
 import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.repository.SessionRepository;
 import com.jeensh.j_log.api.request.Login;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -61,7 +60,8 @@ class AuthControllerTest {
                         .content(json_login)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken", notNullValue()))
+                .andExpect(cookie().exists("SESSION"))
+                .andExpect(cookie().value("SESSION", member.getSessions().get(0).getAccessToken()))
                 .andDo(print());
     }
 
@@ -119,8 +119,11 @@ class AuthControllerTest {
         Session session = member.addSession();
         memberRepository.save(member);
 
+        Cookie cookie = new Cookie("SESSION", session.getAccessToken());
+
         //expected
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/test")
+                        .cookie(cookie)
                         .header("Authorization", session.getAccessToken())
                         .contentType(APPLICATION_JSON)
                 )

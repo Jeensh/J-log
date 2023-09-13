@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: development
+    active: dev
 
   h2:
     console:
@@ -13,12 +13,12 @@ spring:
         one-indexed-parameters: true
 
   datasource:
-    url: jdbc:h2:mem:j-log;NON_KEYWORDS=USER
+    url: jdbc:h2:mem:j-log
     username: sa
     password:
     driver-class-name: org.h2.Driver
 
-  jpa:
-    defer-datasource-initialization: true
-  sql:
-    init-model: always
+  message:
+    api:
+      code: app
+      name: external-api
