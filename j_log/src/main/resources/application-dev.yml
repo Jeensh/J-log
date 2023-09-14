@@ -2,6 +2,6 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: classpath:config/dev-config.properties
 server:
   address: localhost
+  jwt-key: "+zXEEaYamSjA4TDoMsE98xQ/vNV7yvnVKFQZuUUv/o0="

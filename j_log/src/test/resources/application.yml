@@ -9,3 +9,4 @@ spring:
 
 server:
   address: localhost
+  jwt-key: "+zXEEaYamSjA4TDoMsE98xQ/vNV7yvnVKFQZuUUv/o0="

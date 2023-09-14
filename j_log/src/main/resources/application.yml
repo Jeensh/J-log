@@ -17,8 +17,3 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
-  message:
-    api:
-      code: app
-      name: external-api

@@ -17,10 +17,10 @@ public class AuthService {
     /**
      * 유저 로그인
      */
-    public String signIn(Login login){
+    public Long signIn(Login login) {
         Member member = memberRepository.findByEmailAndPassword(login.getEmail(), login.getPassword())
                 .orElseThrow(InvalidSigninInformation::new);
 
-        return member.addSession().getAccessToken();
+        return member.getId();
     }
 }

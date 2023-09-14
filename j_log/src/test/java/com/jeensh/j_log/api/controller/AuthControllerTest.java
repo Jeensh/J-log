@@ -1,24 +1,26 @@
 package com.jeensh.j_log.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.jeensh.j_log.api.domain.Member;
 import com.jeensh.j_log.api.domain.Session;
 import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.repository.SessionRepository;
 import com.jeensh.j_log.api.request.Login;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,7 +40,7 @@ class AuthControllerTest {
     private SessionRepository sessionRepository;
 
     @Test
-    @DisplayName("/auth/login POST 요청시 로그인 성공 후 세션 응답")
+    @DisplayName("/auth/login POST 요청시 로그인 성공 후 jwt 응답")
     void loginTest() throws Exception {
         //given
         Member member = memberRepository.save(Member.builder()
@@ -60,8 +62,7 @@ class AuthControllerTest {
                         .content(json_login)
                 )
                 .andExpect(status().isOk())
-                .andExpect(cookie().exists("SESSION"))
-                .andExpect(cookie().value("SESSION", member.getSessions().get(0).getAccessToken()))
+                .andExpect(jsonPath("$.accessToken").exists())
                 .andDo(print());
     }
 
@@ -119,16 +120,27 @@ class AuthControllerTest {
         Session session = member.addSession();
         memberRepository.save(member);
 
-        Cookie cookie = new Cookie("SESSION", session.getAccessToken());
+        Login login = Login.builder()
+                .email("user1@gmail.com")
+                .password("1234")
+                .build();
 
-        //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/test")
-                        .cookie(cookie)
-                        .header("Authorization", session.getAccessToken())
+        String json_login = objectMapper.writeValueAsString(login);
+
+        ResultActions ra = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(APPLICATION_JSON)
+                        .content(json_login)
+                );
+
+        String accessToken = ra.andReturn().getResponse().getContentAsString();
+        String accessTokenValue = JsonPath.read(accessToken, "$.accessToken");
+
+        //expect
+        mockMvc.perform(MockMvcRequestBuilders.get("/test")
+                .contentType(APPLICATION_JSON)
+                .header("Authorization", accessTokenValue)
                 )
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -143,12 +155,26 @@ class AuthControllerTest {
         Session session = member.addSession();
         memberRepository.save(member);
 
-        //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/test")
-                        .header("Authorization", session.getAccessToken() + "abd")
+        Login login = Login.builder()
+                .email("user1@gmail.com")
+                .password("1234")
+                .build();
+
+        String json_login = objectMapper.writeValueAsString(login);
+
+        ResultActions ra = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(json_login)
+        );
+
+        String accessToken = ra.andReturn().getResponse().getContentAsString();
+        String accessTokenValue = JsonPath.read(accessToken, "$.accessToken");
+
+        //expect
+        mockMvc.perform(MockMvcRequestBuilders.get("/test")
                         .contentType(APPLICATION_JSON)
+                        .header("Authorization", accessTokenValue + "1")
                 )
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andExpect(status().isUnauthorized());
     }
 }

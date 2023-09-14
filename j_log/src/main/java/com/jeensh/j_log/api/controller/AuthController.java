@@ -2,18 +2,20 @@ package com.jeensh.j_log.api.controller;
 
 import com.jeensh.j_log.api.config.ActiveProfile;
 import com.jeensh.j_log.api.request.Login;
+import com.jeensh.j_log.api.response.SessionResponse;
 import com.jeensh.j_log.api.service.AuthService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
+import javax.crypto.SecretKey;
+import java.util.Calendar;
+import java.util.Date;
 
 @RestController
 @Slf4j
@@ -22,26 +24,30 @@ import java.time.Duration;
 public class AuthController {
 
     private final AuthService authService;
-
     private final ActiveProfile activeProfile;
 
     /**
-     * 유저 로그인
+     * 유저 로그인 - jwt 방식
      */
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody Login login) {
-        String accessToken = authService.signIn(login);
+    public SessionResponse login(@RequestBody Login login) {
+        Long memberId = authService.signIn(login);
 
-        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
-                .domain(activeProfile.getAddress())
-                .path("/")
-                .httpOnly(true)
-                .secure(false)
-                .maxAge(Duration.ofDays(30))
-                .sameSite("strict")
-                .build();
+        SecretKey key = Keys.hmacShaKeyFor(activeProfile.getJwtKey());
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Date expirationTime = calendar.getTime();
+
+        String jws = Jwts.builder()
+                .setSubject(String.valueOf(memberId))
+                .signWith(key)
+                .setIssuedAt(new Date())
+                .setExpiration(expirationTime)
+                .compact();
+
+        return new SessionResponse(jws);
     }
 }

@@ -2,6 +2,6 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: classpath:config/prod-config.properties
 server:
   address: sinbong.shop
+  jwt-key: "+zXEEaYamSjA4TDoMsE98xQ/vNV7yvnVKFQZuUUv/o0="

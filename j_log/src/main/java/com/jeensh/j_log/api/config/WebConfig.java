@@ -17,6 +17,7 @@ import static com.jeensh.j_log.api.config.CorsAllowOrigin.*;
 public class WebConfig implements WebMvcConfigurer {
 
     private final SessionRepository sessionRepository;
+    private final ActiveProfile activeProfile;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -33,6 +34,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthResolver(sessionRepository));
+        resolvers.add(new AuthResolver(sessionRepository, activeProfile));
     }
 }
