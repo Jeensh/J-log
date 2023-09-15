@@ -3,7 +3,7 @@ package com.jeensh.j_log.api.controller;
 import com.jeensh.j_log.api.config.ActiveProfile;
 import com.jeensh.j_log.api.request.Login;
 import com.jeensh.j_log.api.response.SessionResponse;
-import com.jeensh.j_log.api.service.AuthService;
+import com.jeensh.j_log.api.service.AuthServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.Date;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
     private final ActiveProfile activeProfile;
 
     /**
@@ -35,11 +35,7 @@ public class AuthController {
 
         SecretKey key = Keys.hmacShaKeyFor(activeProfile.getJwtKey());
 
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        Date expirationTime = calendar.getTime();
+        Date expirationTime = getTomorrow();
 
         String jws = Jwts.builder()
                 .setSubject(String.valueOf(memberId))
@@ -49,5 +45,14 @@ public class AuthController {
                 .compact();
 
         return new SessionResponse(jws);
+    }
+
+    private static Date getTomorrow() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Date expirationTime = calendar.getTime();
+        return expirationTime;
     }
 }

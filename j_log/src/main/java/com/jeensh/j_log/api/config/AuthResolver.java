@@ -3,10 +3,11 @@ package com.jeensh.j_log.api.config;
 import com.jeensh.j_log.api.config.data.MemberSession;
 import com.jeensh.j_log.api.exception.Unauthorized;
 import com.jeensh.j_log.api.repository.SessionRepository;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -50,11 +51,11 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     /**
      * 토큰 유효기간 만료시 ExpiredJwtException 발생
      */
-    public void checkTokenExpired(Claims claims) {
+    private static void checkTokenExpired(Claims claims) {
         claims.getExpiration().before(new Date());
     }
 
-    public Claims getClaimsFromJwt(String token, byte[] key) {
+    private static Claims getClaimsFromJwt(String token, byte[] key) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

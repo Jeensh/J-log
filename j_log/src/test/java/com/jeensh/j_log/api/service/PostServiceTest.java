@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PostServiceTest {
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
     @Autowired
     private PostRepository postRepository;
 
