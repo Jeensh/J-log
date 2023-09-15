@@ -7,6 +7,7 @@ import com.jeensh.j_log.api.domain.Session;
 import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.repository.SessionRepository;
 import com.jeensh.j_log.api.request.Login;
+import com.jeensh.j_log.api.request.SignUp;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +59,7 @@ class AuthControllerTest {
         String json_login = objectMapper.writeValueAsString(login);
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(json_login)
                 )
@@ -91,7 +93,7 @@ class AuthControllerTest {
 
         //expected
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(json_wrong_email)
                 )
@@ -99,7 +101,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("아이디/비밀번호가 올바르지 않습니다."))
                 .andDo(print());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(json_wrong_password)
                 )
@@ -127,20 +129,21 @@ class AuthControllerTest {
 
         String json_login = objectMapper.writeValueAsString(login);
 
-        ResultActions ra = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .contentType(APPLICATION_JSON)
-                        .content(json_login)
-                );
+        ResultActions ra = mockMvc.perform(post("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(json_login)
+        );
 
         String accessToken = ra.andReturn().getResponse().getContentAsString();
         String accessTokenValue = JsonPath.read(accessToken, "$.accessToken");
 
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.get("/test")
-                .contentType(APPLICATION_JSON)
-                .header("Authorization", accessTokenValue)
+        mockMvc.perform(get("/test")
+                        .contentType(APPLICATION_JSON)
+                        .header("Authorization", accessTokenValue)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
@@ -162,7 +165,7 @@ class AuthControllerTest {
 
         String json_login = objectMapper.writeValueAsString(login);
 
-        ResultActions ra = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        ResultActions ra = mockMvc.perform(post("/auth/login")
                 .contentType(APPLICATION_JSON)
                 .content(json_login)
         );
@@ -171,10 +174,30 @@ class AuthControllerTest {
         String accessTokenValue = JsonPath.read(accessToken, "$.accessToken");
 
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.get("/test")
+        mockMvc.perform(get("/test")
                         .contentType(APPLICATION_JSON)
                         .header("Authorization", accessTokenValue + "1")
                 )
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/auth/signup post 요청시 회원가입")
+    void signUp() throws Exception {
+        //given
+        SignUp signUp = SignUp.builder()
+                .name("jeensh")
+                .email("jeensh25@gmail.com")
+                .password("1234")
+                .build();
+
+        //expect
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signUp))
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 }

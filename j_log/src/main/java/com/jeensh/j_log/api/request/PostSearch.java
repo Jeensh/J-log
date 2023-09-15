@@ -3,7 +3,6 @@ package com.jeensh.j_log.api.request;
 import lombok.*;
 
 @Getter
-@Setter
 public class PostSearch {
 
     private static final int MAX_SIZE = 2000;

@@ -2,12 +2,13 @@ package com.jeensh.j_log.api.controller;
 
 import com.jeensh.j_log.api.config.data.MemberSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
-//@Profile("test")
+@Profile("test")
 @RequiredArgsConstructor
 @RequestMapping("/test")
 public class TestController {

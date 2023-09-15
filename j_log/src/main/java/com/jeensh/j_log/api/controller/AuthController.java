@@ -2,8 +2,9 @@ package com.jeensh.j_log.api.controller;
 
 import com.jeensh.j_log.api.config.ActiveProfile;
 import com.jeensh.j_log.api.request.Login;
+import com.jeensh.j_log.api.request.SignUp;
 import com.jeensh.j_log.api.response.SessionResponse;
-import com.jeensh.j_log.api.service.AuthServiceImpl;
+import com.jeensh.j_log.api.service.AuthService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.Date;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthServiceImpl authService;
+    private final AuthService authService;
     private final ActiveProfile activeProfile;
 
     /**
@@ -45,6 +46,14 @@ public class AuthController {
                 .compact();
 
         return new SessionResponse(jws);
+    }
+
+    /**
+     * 회원가입
+     */
+    @PostMapping("/signup")
+    public void signUp(@RequestBody SignUp signUp){
+        authService.signUp(signUp);
     }
 
     private static Date getTomorrow() {

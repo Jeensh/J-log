@@ -4,7 +4,7 @@ import com.jeensh.j_log.api.request.PostCreate;
 import com.jeensh.j_log.api.request.PostEdit;
 import com.jeensh.j_log.api.request.PostSearch;
 import com.jeensh.j_log.api.response.PostResponse;
-import com.jeensh.j_log.api.service.PostServiceImpl;
+import com.jeensh.j_log.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +19,7 @@ import java.util.Map;
 @RequestMapping("/posts")
 public class PostController {
 
-    private final PostServiceImpl postService;
+    private final PostService postService;
 
     /**
      * post 저장

@@ -1,8 +1,72 @@
 package com.jeensh.j_log.api.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.jeensh.j_log.api.domain.Member;
+import com.jeensh.j_log.api.exception.AlreadyExistsEmailException;
+import com.jeensh.j_log.api.repository.MemberRepository;
+import com.jeensh.j_log.api.request.SignUp;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.NoSuchElementException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@Slf4j
+@SpringBootTest
+@Transactional
 class AuthServiceTest {
-    // TODO : AuthService 테스트 작성할 것
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private MemberRepository memberRepository;
+
+    // TODO : login 테스트 작성 할 것
+
+    @Test
+    @DisplayName("회원가입 성공")
+    void signUp_success() {
+        //given
+        SignUp signUp = SignUp.builder()
+                .name("jeensh")
+                .email("jeensh25@gmail.com")
+                .password("1234")
+                .build();
+
+        //when
+        authService.signUp(signUp);
+
+        //then
+        assertThat(memberRepository.count()).isEqualTo(1);
+        assertThat(memberRepository.findByEmail("jeensh25@gmail.com").orElseThrow(NoSuchElementException::new)
+                .getPassword()).isEqualTo("1234");
+
+    }
+
+    @Test
+    @DisplayName("중복된 이메일 사용시 회원가입 실패")
+    void signUp_duplicateEmail() {
+        //given
+        Member member1 = Member.builder()
+                .name("jeensh")
+                .email("jeensh25@gmail.com")
+                .password("1234")
+                .build();
+
+        memberRepository.save(member1);
+
+        SignUp signUp = SignUp.builder()
+                .name("hee")
+                .email("jeensh25@gmail.com")
+                .password("4321")
+                .build();
+
+        //expect
+        assertThatThrownBy(() -> authService.signUp(signUp)).isInstanceOf(AlreadyExistsEmailException.class);
+    }
 }

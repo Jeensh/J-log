@@ -3,7 +3,7 @@ package com.jeensh.j_log.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeensh.j_log.api.repository.PostRepository;
 import com.jeensh.j_log.api.request.PostCreate;
-import com.jeensh.j_log.api.service.PostServiceImpl;
+import com.jeensh.j_log.api.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ public class PostControllerDocTest {
     private PostRepository postRepository;
 
     @Autowired
-    private PostServiceImpl postService;
+    private PostService postService;
 
     @Autowired
     private ObjectMapper objectMapper;

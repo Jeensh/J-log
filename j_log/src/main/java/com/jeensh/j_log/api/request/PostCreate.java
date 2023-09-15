@@ -3,9 +3,11 @@ package com.jeensh.j_log.api.request;
 import com.jeensh.j_log.api.exception.InvalidRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PostCreate {
 
     @NotBlank(message = "타이틀을 입력해주세요!")
