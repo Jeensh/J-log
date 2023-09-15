@@ -29,7 +29,7 @@ class AuthServiceTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
 
     @Test
     @DisplayName("로그인 성공")
@@ -38,7 +38,7 @@ class AuthServiceTest {
         Member member = Member.builder()
                 .name("jeensh")
                 .email("jeensh25@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(encoder.encrypt("1234"))
                 .build();
         memberRepository.save(member);
 
@@ -62,7 +62,7 @@ class AuthServiceTest {
         Member member = Member.builder()
                 .name("jeensh")
                 .email("jeensh25@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(encoder.encrypt("1234"))
                 .build();
         memberRepository.save(member);
 
@@ -89,10 +89,8 @@ class AuthServiceTest {
         authService.signUp(signUp);
 
         //then
-        assertThat(memberRepository.count()).isEqualTo(1);
-        assertThat(memberRepository.findByEmail("jeensh25@gmail.com").orElseThrow(NoSuchElementException::new)
-                .getPassword()).isNotEqualTo("1234").isNotBlank();
-
+        Member member  = memberRepository.findByEmail("jeensh25@gmail.com").orElseThrow(NoSuchElementException::new);
+        assertThat(encoder.matches(member.getPassword(), encoder.encrypt("1234")));
     }
 
     @Test

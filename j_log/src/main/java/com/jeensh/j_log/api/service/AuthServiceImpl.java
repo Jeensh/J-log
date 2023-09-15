@@ -8,7 +8,6 @@ import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.request.Login;
 import com.jeensh.j_log.api.request.SignUp;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,23 +1,16 @@
 package com.jeensh.j_log.api.crypto;
 
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+public interface PasswordEncoder {
 
-@Component
-public class PasswordEncoder {
+    /**
+     * 비밀번호 암호화
+     * 반환값 : String(암호화된 비밀번호)
+     */
+    String encrypt(String password);
 
-    private static final SCryptPasswordEncoder encoder = new SCryptPasswordEncoder(
-            16,
-            8,
-            1,
-            32,
-            64);
-
-    public String encrypt(String password){
-        return encoder.encode(password);
-    }
-
-    public Boolean matches(String password, String encryptedPassword){
-        return encoder.matches(password, encryptedPassword);
-    }
+    /**
+     * 비밀번호 대조
+     * 반환값 : Boolean(비밀번호와 암호화된 비밀번호의 원본이 일치하는지)
+     */
+    Boolean matches(String password, String encryptedPassword);
 }
