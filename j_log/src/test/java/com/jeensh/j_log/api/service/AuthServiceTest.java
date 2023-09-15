@@ -1,8 +1,11 @@
 package com.jeensh.j_log.api.service;
 
+import com.jeensh.j_log.api.crypto.PasswordEncoder;
 import com.jeensh.j_log.api.domain.Member;
 import com.jeensh.j_log.api.exception.AlreadyExistsEmailException;
+import com.jeensh.j_log.api.exception.InvalidSigninInformation;
 import com.jeensh.j_log.api.repository.MemberRepository;
+import com.jeensh.j_log.api.request.Login;
 import com.jeensh.j_log.api.request.SignUp;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +28,52 @@ class AuthServiceTest {
     private AuthService authService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // TODO : login 테스트 작성 할 것
+    @Test
+    @DisplayName("로그인 성공")
+    void login_success() {
+        //given
+        Member member = Member.builder()
+                .name("jeensh")
+                .email("jeensh25@gmail.com")
+                .password(passwordEncoder.encrypt("1234"))
+                .build();
+        memberRepository.save(member);
+
+        Login login = Login.builder()
+                .email("jeensh25@gmail.com")
+                .password("1234")
+                .build();
+
+        //when
+        Long memberId = authService.signIn(login);
+
+        //then
+        assertThat(memberRepository.findById(memberId).orElseThrow(NoSuchElementException::new)
+                .getEmail()).isEqualTo("jeensh25@gmail.com");
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 잘못된 비밀번호")
+    void login_WrongPassword() {
+        //given
+        Member member = Member.builder()
+                .name("jeensh")
+                .email("jeensh25@gmail.com")
+                .password(passwordEncoder.encrypt("1234"))
+                .build();
+        memberRepository.save(member);
+
+        Login login = Login.builder()
+                .email("jeensh25@gmail.com")
+                .password("12345")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> authService.signIn(login)).isInstanceOf(InvalidSigninInformation.class);
+    }
 
     @Test
     @DisplayName("회원가입 성공")
@@ -44,7 +91,7 @@ class AuthServiceTest {
         //then
         assertThat(memberRepository.count()).isEqualTo(1);
         assertThat(memberRepository.findByEmail("jeensh25@gmail.com").orElseThrow(NoSuchElementException::new)
-                .getPassword()).isEqualTo("1234");
+                .getPassword()).isNotEqualTo("1234").isNotBlank();
 
     }
 

@@ -6,6 +6,7 @@ import com.jeensh.j_log.api.request.SignUp;
 public interface AuthService {
     /**
      * 유저 로그인
+     * 반환값 : memberId
      */
     Long signIn(Login login);
 

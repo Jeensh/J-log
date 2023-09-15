@@ -1,14 +1,16 @@
 package com.jeensh.j_log.api.service;
 
+import com.jeensh.j_log.api.crypto.PasswordEncoder;
 import com.jeensh.j_log.api.domain.Member;
 import com.jeensh.j_log.api.exception.AlreadyExistsEmailException;
 import com.jeensh.j_log.api.exception.InvalidSigninInformation;
 import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.request.Login;
 import com.jeensh.j_log.api.request.SignUp;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,13 +19,21 @@ import java.util.Optional;
 @Transactional
 public class AuthServiceImpl implements AuthService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder encoder;
 
     /**
      * 유저 로그인
      */
+    @Transactional(readOnly = true)
     public Long signIn(Login login) {
-        Member member = memberRepository.findByEmailAndPassword(login.getEmail(), login.getPassword())
+        Member member = memberRepository.findByEmail(login.getEmail())
                 .orElseThrow(InvalidSigninInformation::new);
+
+        boolean matches = encoder.matches(login.getPassword(), member.getPassword());
+        if (!matches){
+            throw new InvalidSigninInformation();
+        }
+
         return member.getId();
     }
 
@@ -36,9 +46,11 @@ public class AuthServiceImpl implements AuthService {
             throw new AlreadyExistsEmailException();
         }
 
+        String encryptedPassword = encoder.encrypt(signup.getPassword());
+
         Member newMember = Member.builder()
                 .name(signup.getName())
-                .password(signup.getPassword())
+                .password(encryptedPassword)
                 .email(signup.getEmail())
                 .build();
         memberRepository.save(newMember);

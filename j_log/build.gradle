@@ -42,7 +42,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// 빈 검즘
+	// 빈 검증
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// queryDSL
@@ -63,6 +63,10 @@ dependencies {
 
 	//설정 파일 처리 (인텔리제이에 설정파일 인식시키기)
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	//비밀번호 암호하
+	implementation 'org.springframework.security:spring-security-crypto'
+	implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 }
 
 tasks.named('test') {
