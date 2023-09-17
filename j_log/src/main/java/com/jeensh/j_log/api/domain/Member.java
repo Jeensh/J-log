@@ -1,14 +1,15 @@
 package com.jeensh.j_log.api.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,18 +33,5 @@ public class Member {
         this.email = email;
         this.password = password;
         this.createdAt = LocalDateTime.now();
-    }
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Session> sessions = new ArrayList<>();
-
-    public Session addSession() {
-        Session session = Session.builder()
-                .member(this)
-                .build();
-
-        sessions.add(session);
-
-        return session;
     }
 }
