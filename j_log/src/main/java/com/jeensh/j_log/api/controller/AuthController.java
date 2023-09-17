@@ -5,13 +5,7 @@ import com.jeensh.j_log.api.request.SignUp;
 import com.jeensh.j_log.api.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Calendar;
-import java.util.Date;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -22,20 +16,16 @@ public class AuthController {
     private final AuthService authService;
     private final ActiveProfile activeProfile;
 
+    @GetMapping("/login")
+    public String login() {
+        return "로그인 페이지입니다.";
+    }
+
     /**
      * 회원가입
      */
     @PostMapping("/signup")
     public void signUp(@RequestBody SignUp signUp){
         authService.signUp(signUp);
-    }
-
-    private static Date getTomorrow() {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        Date expirationTime = calendar.getTime();
-        return expirationTime;
     }
 }
