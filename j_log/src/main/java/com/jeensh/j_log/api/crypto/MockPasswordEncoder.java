@@ -1,6 +1,7 @@
 package com.jeensh.j_log.api.crypto;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,15 +9,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Profile({"test", "dev"})
-public class MockPasswordEncoder implements PasswordEncoder{
-
+public class MockPasswordEncoder implements PasswordEncoder {
     @Override
-    public String encrypt(String password) {
-        return password;
+    public String encode(CharSequence rawPassword) {
+        return rawPassword.toString();
     }
 
     @Override
-    public Boolean matches(String password, String encryptedPassword) {
-        return password.equals(encryptedPassword);
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return encodedPassword.equals(rawPassword);
     }
 }

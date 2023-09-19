@@ -1,14 +1,7 @@
 ### 테스트 요청
 
 POST http://localhost:8080/auth/login
-Content-Type: application/json
+Content-Type: application/x-www-form-urlencoded
 
-{
-    "email": "jeensh25@gmail.com",
-    "password": "1234"
-}
-
-### 인증 페이지 요청
-GET http://localhost:8080/test
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjk0NzczNTgwLCJleHAiOjE2OTQ4NTk5ODB9.FW_wv8IO1hiVVtB1pbUCtxS2I4ZnUCSLKhLfIXE62OE
+username=jeensh&password=1234
 

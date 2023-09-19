@@ -1,11 +1,11 @@
 package com.jeensh.j_log.api.service;
 
-import com.jeensh.j_log.api.crypto.PasswordEncoder;
 import com.jeensh.j_log.api.domain.Member;
 import com.jeensh.j_log.api.exception.AlreadyExistsEmailException;
 import com.jeensh.j_log.api.repository.MemberRepository;
 import com.jeensh.j_log.api.request.SignUp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AlreadyExistsEmailException();
         }
 
-        String encryptedPassword = encoder.encrypt(signup.getPassword());
+        String encryptedPassword = encoder.encode(signup.getPassword());
 
         Member newMember = Member.builder()
                 .name(signup.getName())

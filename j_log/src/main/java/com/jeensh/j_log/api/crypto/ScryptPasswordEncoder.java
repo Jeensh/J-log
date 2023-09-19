@@ -1,6 +1,7 @@
 package com.jeensh.j_log.api.crypto;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,13 @@ public class ScryptPasswordEncoder implements PasswordEncoder {
             32,
             64);
 
-    public String encrypt(String password){
-        return encoder.encode(password);
+    @Override
+    public String encode(CharSequence rawPassword) {
+        return encoder.encode(rawPassword.toString());
     }
 
-    public Boolean matches(String password, String encryptedPassword){
-        return encoder.matches(password, encryptedPassword);
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return encoder.matches(rawPassword.toString(), encodedPassword);
     }
 }

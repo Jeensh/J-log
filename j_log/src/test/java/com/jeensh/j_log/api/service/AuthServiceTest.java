@@ -1,6 +1,5 @@
 package com.jeensh.j_log.api.service;
 
-import com.jeensh.j_log.api.crypto.PasswordEncoder;
 import com.jeensh.j_log.api.domain.Member;
 import com.jeensh.j_log.api.exception.AlreadyExistsEmailException;
 import com.jeensh.j_log.api.repository.MemberRepository;
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.NoSuchElementException;
 
@@ -44,7 +44,7 @@ class AuthServiceTest {
 
         //then
         Member member  = memberRepository.findByEmail("jeensh25@gmail.com").orElseThrow(NoSuchElementException::new);
-        assertThat(encoder.matches(member.getPassword(), encoder.encrypt("1234")));
+        assertThat(encoder.matches(member.getPassword(), encoder.encode("1234")));
     }
 
     @Test
