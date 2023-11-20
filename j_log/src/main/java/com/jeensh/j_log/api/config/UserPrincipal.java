@@ -11,7 +11,11 @@ public class UserPrincipal extends User {
     private final Long memberId;
 
     public UserPrincipal(Member member){
-        super(member.getEmail(), member.getPassword(), List.of(new SimpleGrantedAuthority("ADMIN")));
+        super(member.getEmail(), member.getPassword(),
+                List.of(
+                        new SimpleGrantedAuthority("ROLE_ADMIN"),
+                        new SimpleGrantedAuthority("WRITE")
+                ));
         this.memberId = member.getId();
     }
 }
