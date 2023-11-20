@@ -1,7 +1,18 @@
-### 테스트 요청
+### 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
 
+{
+    "name":"신동민",
+    "email":"sdm0131@gmail.com",
+    "password":"1234"
+}
+
+### 로그인
 POST http://localhost:8080/auth/login
 Content-Type: application/x-www-form-urlencoded
 
-username=jeensh&password=1234
+username=sdm0131@gmail.com&password=1234&remember=1
 
+### 메인 페이지
+GET http://localhost:8080

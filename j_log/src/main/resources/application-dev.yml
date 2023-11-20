@@ -2,6 +2,14 @@ spring:
   config:
     activate:
       on-profile: dev
+
+  session:
+    timeout: 86400
+
 server:
   address: localhost
   jwt-key: "+zXEEaYamSjA4TDoMsE98xQ/vNV7yvnVKFQZuUUv/o0="
+  servlet:
+    session:
+      cookie:
+        max-age: 172800
